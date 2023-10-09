@@ -1,1 +1,1 @@
-arduino-cli compile --fqbn arduino:avr:uno water_boiling_system.ino
+arduino-cli compile --fqbn arduino:avr:uno water_boiling_system_arduino.ino

@@ -23,22 +23,22 @@ SemaphoreHandle_t input_valve, middle_valve, output_valve, resistance;
 
 void PrintSystemStatusTask() {
     while (1) {
-        ansi.clearScreen();
-        ansi.print("TANK1: Water Level: ");
-        ansi.print(water_level_tank1);
-        ansi.print(" Max. Sensor: ");
-        ansi.print(max_sensor_tank1);
-        ansi.print(" Min. Sensor: ");
-        ansi.print(min_sensor_tank1);
-        ansi.println();
-        ansi.print("TANK2: Water Level: ");
-        ansi.print(water_level_tank2);
-        ansi.print(" Max. Sensor: ");
-        ansi.print(max_sensor_tank2);
-        ansi.print(" Min. Sensor: ");
-        ansi.print(min_sensor_tank2);
-        ansi.print(" Temp: ");
-        ansi.print(temp_water_tank2);
+        Ansi.clearScreen();
+        Ansi.print("TANK1: Water Level: ");
+        Ansi.print(water_level_tank1);
+        Ansi.print(" Max. Sensor: ");
+        Ansi.print(max_sensor_tank1);
+        Ansi.print(" Min. Sensor: ");
+        Ansi.print(min_sensor_tank1);
+        Ansi.println();
+        Ansi.print("TANK2: Water Level: ");
+        Ansi.print(water_level_tank2);
+        Ansi.print(" Max. Sensor: ");
+        Ansi.print(max_sensor_tank2);
+        Ansi.print(" Min. Sensor: ");
+        Ansi.print(min_sensor_tank2);
+        Ansi.print(" Temp: ");
+        Ansi.print(temp_water_tank2);
         vTaskDelay(SENSOR_READING_TIMER / portTICK_PERIOD_MS);
     }
 }
@@ -127,8 +127,8 @@ void OutputValveControlTask(){
 
 void setup() {
     Serial.begin(115200);
-    ansi.normal();
-    ansi.clearScreen();
+    Ansi.normal();
+    Ansi.clearScreen();
     input_valve = xSemaphoreCreateMutex();
     if (input_valve != NULL) {
         ansi.print("Input valve mutex created");
