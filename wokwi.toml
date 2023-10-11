@@ -1,4 +1,0 @@
-[wokwi]
-version = 1
-firmware = '/build/water_boiling_system.ino.hex'
-elf = '/build/water_boiling_system.ino.elf'

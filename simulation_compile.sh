@@ -1,1 +1,0 @@
-arduino-cli compile --fqbn arduino:avr:uno --build-path build/ water_boiling_system_arduino.ino
