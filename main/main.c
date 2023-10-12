@@ -3,9 +3,10 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
+#include "system_print.h"
 
-#define WATER_DRAIN_SPEED 500
-#define WATER_BOILING_RATE 1000
+#define WATER_DRAIN_SPEED 150
+#define WATER_BOILING_RATE 150
 #define SENSOR_READING_TIMER 100
 #define PRINTING_TIMER 160
 #define WATER_MAX_LEVEL 95
@@ -103,8 +104,13 @@ void PrintSystemStatusTask() {
         print_boolean_sensor_data(output_valve_status);
         printf("\n");
         printf("----------------------------\n");
-
+        valve_print(40,0,input_valve_status,27);
+        tank_print(40,0,water_level_tank1,27,0,0,max_sensor_tank1,min_sensor_tank1);
+        valve_print(61,0,middle_valve_status,27);
+        tank_print(61,0,water_level_tank2,temp_water_tank2,resistance_status,2,max_sensor_tank2,min_sensor_tank2);
+        valve_print(82,0,output_valve_status,temp_water_tank2);
         vTaskDelay(pdMS_TO_TICKS(PRINTING_TIMER));
+        gotoxy(0,18);
     }
 }
 

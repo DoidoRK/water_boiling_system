@@ -6,6 +6,8 @@
       - Para maiores detalhes acesse:
          http://ctdp.tripod.com/os/linux/howlinuxworks/
  **************************************************************/
+#ifndef _CONIO_LINUX_H_
+#define	_CONIO_LINUX_H_
 #include <stdio.h>
 /* Definicao de teclas */
 #define ESC    27
@@ -122,3 +124,4 @@ void clrline()
 {
     printf("%c[2K%cE", ESC, ESC);
 }
+#endif /* _CONIO_LINUX_H_ */
