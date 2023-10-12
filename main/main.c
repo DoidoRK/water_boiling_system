@@ -109,8 +109,8 @@ void PrintSystemStatusTask() {
         valve_print(61,0,middle_valve_status,27);
         tank_print(61,0,water_level_tank2,temp_water_tank2,resistance_status,2,max_sensor_tank2,min_sensor_tank2);
         valve_print(82,0,output_valve_status,temp_water_tank2);
-        vTaskDelay(pdMS_TO_TICKS(PRINTING_TIMER));
         gotoxy(0,18);
+        vTaskDelay(pdMS_TO_TICKS(PRINTING_TIMER));
     }
 }
 
