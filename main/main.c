@@ -11,6 +11,8 @@
 #define PRINTING_TIMER 160
 #define WATER_MAX_LEVEL 95
 #define WATER_MIN_LEVEL 20
+#define ANIMATION_STARTING_X 40
+#define ANIMATION_STARTING_Y 4
 
 //Tank 1 variables
 uint8_t max_sensor_tank1 = 0, min_sensor_tank1 = 0;
@@ -29,26 +31,6 @@ uint8_t water_is_boiled = 0;
 
 //Valves
 SemaphoreHandle_t water_tank1_mutex, water_tank2_mutex, temp_water2_mutex;
-
-void print_boolean_sensor_data(uint8_t boolean_data){
-    if(boolean_data){
-            setfontcolor(GREEN);
-        } else {
-            setfontcolor(RED);
-        }
-    printf("%s", boolean_data? "ON " : "OFF");
-    setfontcolor(WHITE);
-}
-
-void print_number_sensor_data(uint8_t sensor_data){
-    if(sensor_data){
-        setfontcolor(GREEN);
-    } else {
-        setfontcolor(RED);
-    }
-    printf("%d ", sensor_data);
-    setfontcolor(WHITE);
-}
 
 void PrintSystemStatusTask() {
     for (;;) {
@@ -75,18 +57,7 @@ void PrintSystemStatusTask() {
         print_number_sensor_data(min_sensor_tank2);
         printf("\n");
         printf("Water Temperature: ");
-        if(40 >= temp_water_tank2){
-            setfontcolor(BLUE);
-        } else {
-            if(40 < temp_water_tank2 && 65 >= temp_water_tank2){
-                setfontcolor(YELLOW);
-            } else {
-                if(65 < temp_water_tank2){
-                    setfontcolor(RED);
-                }
-            }
-        }
-        printf("%d°C\n", temp_water_tank2);
+        print_tank_temperature(temp_water_tank2);
         setfontcolor(WHITE);
         printf("----------------------------\n");
 
@@ -104,11 +75,17 @@ void PrintSystemStatusTask() {
         print_boolean_sensor_data(output_valve_status);
         printf("\n");
         printf("----------------------------\n");
-        valve_print(40,0,input_valve_status,27);
-        tank_print(40,0,water_level_tank1,27,0,0,max_sensor_tank1,min_sensor_tank1);
-        valve_print(61,0,middle_valve_status,27);
-        tank_print(61,0,water_level_tank2,temp_water_tank2,resistance_status,2,max_sensor_tank2,min_sensor_tank2);
-        valve_print(82,0,output_valve_status,temp_water_tank2);
+        
+        valve_print(ANIMATION_STARTING_X,ANIMATION_STARTING_Y,input_valve_status,100,27,water_level_tank1,27);
+        valve_print(ANIMATION_STARTING_X+21,ANIMATION_STARTING_Y,middle_valve_status,
+                    water_level_tank1,27,water_level_tank2,temp_water_tank2);
+        valve_print(ANIMATION_STARTING_X+42,ANIMATION_STARTING_Y,output_valve_status,
+                    water_level_tank2,temp_water_tank2,0,70);
+        tank_print(ANIMATION_STARTING_X,ANIMATION_STARTING_Y,water_level_tank1,27,0,0,max_sensor_tank1,min_sensor_tank1);
+        tank_print(ANIMATION_STARTING_X+21,ANIMATION_STARTING_Y,water_level_tank2,
+                    temp_water_tank2,resistance_status,2,max_sensor_tank2,min_sensor_tank2);
+        gotoxy(ANIMATION_STARTING_X+47,ANIMATION_STARTING_Y+3);
+        print_tank_temperature(temp_water_tank2);
         gotoxy(0,18);
         vTaskDelay(pdMS_TO_TICKS(PRINTING_TIMER));
     }
