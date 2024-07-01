@@ -5,9 +5,9 @@ enum MESSAGE_OP{
     SYSTEM_STARTUP,
     SYSTEM_INTR,
     SYSTEM_SHUTDOWN
-}
+};
 
-typedef struct {
+typedef struct system_settings_struct{
     int input_valve_flow_speed;
     int middle_valve_flow_speed;
     int output_valve_flow_speed;
@@ -19,7 +19,7 @@ typedef struct {
     int boiling_tank_water_min_level;
 } system_settings_t;
 
-typedef struct {
+typedef struct data_packet_struct{
     int message_type;
     system_settings_t system_settings;
-} data_packet_t
+} data_packet_t;

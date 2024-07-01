@@ -6,9 +6,11 @@
 #include <errno.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <cJSON>
 #include "esp_netif.h"
 #include "esp_log.h"
+#include <cJSON.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #define HOST_IP_ADDR CONFIG_IPV4_ADDR
 #define PORT CONFIG_PORT
@@ -41,22 +43,6 @@ void setup_tcp_socket(void){
             ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
         }
     ESP_LOGI(TAG, "Successfully connected to server");
-    int err = send(sock, payload, strlen(payload), 0);
-    if (err < 0) {
-        ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
-    }
-
-    int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
-    // Error occurred during receiving
-    if (len < 0) {
-        ESP_LOGE(TAG, "recv failed: errno %d", errno);
-    }
-    // Data received
-    else {
-        rx_buffer[len] = 0; // Null-terminate whatever we received and treat like a string
-        ESP_LOGI(TAG, "Received %d bytes from %s:", len, host_ip);
-        ESP_LOGI(TAG, "%s", rx_buffer);
-    }
 }
 
 // Function to convert system_settings_t to JSON string
