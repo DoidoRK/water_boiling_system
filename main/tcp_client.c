@@ -1,21 +1,6 @@
-#include "types.h"
-#include "sdkconfig.h"
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <errno.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include "esp_netif.h"
-#include "esp_log.h"
-#include <cJSON.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
+#include "tcp_client.h"
 
-#define HOST_IP_ADDR CONFIG_IPV4_ADDR
-#define PORT CONFIG_PORT
-
+// Define the static variables
 static const char *TAG = "TCP CLIENT";
 struct sockaddr_in dest_addr;
 int sock;
@@ -24,6 +9,7 @@ char host_ip[] = HOST_IP_ADDR;
 int addr_family = 0;
 int ip_protocol = 0;
 
+// External queue handles
 extern QueueHandle_t recv_packet_queue;
 extern QueueHandle_t sensor_readings_queue;
 extern void set_system_parameters(system_params_t system_settings);
@@ -87,7 +73,7 @@ void send_packet(data_packet_t data_packet) {
 static void SendSystemStatusTask(void* arg){
     while (1) {
         sensor_readings_t sensor_readings;
-        //Gets sensor readings coming from sensor_readings_queue
+        // Gets sensor readings coming from sensor_readings_queue
         if(xQueueReceive(sensor_readings_queue, &sensor_readings, portMAX_DELAY)) {
             data_packet_t data_packet;
             data_packet.message_type = SYSTEM_STATUS;
@@ -105,21 +91,24 @@ static void handleServerMessageTask(void* arg){
 
 void setup_tcp_socket(void){
     inet_pton(AF_INET, host_ip, &dest_addr.sin_addr);
-        dest_addr.sin_family = AF_INET;
-        dest_addr.sin_port = htons(PORT);
-        addr_family = AF_INET;
-        ip_protocol = IPPROTO_IP;
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_port = htons(PORT);
+    addr_family = AF_INET;
+    ip_protocol = IPPROTO_IP;
 
-        sock =  socket(addr_family, SOCK_STREAM, ip_protocol);
-        if (sock < 0) {
-            ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
-        }
-        ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip, PORT);
+    sock =  socket(addr_family, SOCK_STREAM, ip_protocol);
+    if (sock < 0) {
+        ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
+        return; // Add return statement to prevent further execution
+    }
+    ESP_LOGI(TAG, "Socket created, connecting to %s:%d", host_ip, PORT);
 
-        int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-        if (err != 0) {
-            ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
-        }
+    int err = connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+    if (err != 0) {
+        ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
+        close(sock); // Add cleanup on failure
+        return; // Add return statement to prevent further execution
+    }
     ESP_LOGI(TAG, "Successfully connected to server");
-    xTaskCreate(SendSystemStatusTask,"SendSystemStatusTask", 2048, NULL, 1, NULL);
+    xTaskCreate(SendSystemStatusTask, "SendSystemStatusTask", 2048, NULL, 1, NULL);
 }
