@@ -16,19 +16,19 @@ int boiling_tank_water_max_level = 95;
 int boiling_tank_water_min_level = 20;
 
 //Tank 1 variables
-uint8_t max_sensor_tank1 = 0, min_sensor_tank1 = 0;
-uint8_t water_level_tank1 = 0;
+int max_sensor_tank1 = 0, min_sensor_tank1 = 0;
+int water_level_tank1 = 0;
 
 //Tank 2 variables
-uint8_t temp_water_tank2 = 27;
-uint8_t max_sensor_tank2 = 0, min_sensor_tank2 = 0;
-uint8_t water_level_tank2 = 0;
+int temp_water_tank2 = 27;
+int max_sensor_tank2 = 0, min_sensor_tank2 = 0;
+int water_level_tank2 = 0;
 
 //System actuators status:
-uint8_t input_valve_status = 0, middle_valve_status = 0, output_valve_status = 0, resistance_status = 0;
+int input_valve_status = 0, middle_valve_status = 0, output_valve_status = 0, resistance_status = 0;
 
 //Water state status:
-uint8_t water_is_boiled = 0;
+int water_is_boiled = 0;
 
 //Valves
 SemaphoreHandle_t water_tank1_mutex, water_tank2_mutex, temp_water2_mutex;
@@ -115,6 +115,7 @@ void OutputValveControlTask(){
 
 void SystemControlTask(){
     for(;;){
+        sensor_readings_t sensor_readings;
         input_valve_status = 0;
         middle_valve_status = 0;
         output_valve_status = 0;
@@ -147,6 +148,21 @@ void SystemControlTask(){
             output_valve_status = 1;
         }
 
+        sensor_readings.max_sensor_tank1 = max_sensor_tank1;
+        sensor_readings.min_sensor_tank1 = min_sensor_tank1;
+        sensor_readings.water_level_tank1 = water_level_tank1;
+        sensor_readings.temp_water_tank2 = temp_water_tank2;
+        sensor_readings.max_sensor_tank2 = max_sensor_tank2;
+        sensor_readings.min_sensor_tank2 = min_sensor_tank2;
+        sensor_readings.water_level_tank2 = water_level_tank2;
+        sensor_readings.input_valve_status = input_valve_status;
+        sensor_readings.middle_valve_status = middle_valve_status;
+        sensor_readings.output_valve_status = output_valve_status;
+        sensor_readings.resistance_status = resistance_status;
+        sensor_readings.water_is_boiled = water_is_boiled;
+
+        xQueueSend(sensor_readings_queue, &sensor_readings, pdMS_TO_TICKS(sensor_reading_timer));
+
         vTaskDelay(pdMS_TO_TICKS(sensor_reading_timer));
     }
 }
@@ -176,7 +192,7 @@ void startup_system(){
     xTaskCreate(OutputValveControlTask,"OutputValveControlTask",2048,NULL,4,NULL);
 }
 
-void set_system_parameters(system_settings_t system_settings) {
+void set_system_parameters(system_params_t system_settings) {
     int input_valve_flow_speed = system_settings.input_valve_flow_speed;
     int middle_valve_flow_speed = system_settings.middle_valve_flow_speed;
     int output_valve_flow_speed = system_settings.output_valve_flow_speed;
@@ -186,16 +202,4 @@ void set_system_parameters(system_settings_t system_settings) {
     int water_tank_water_min_level = system_settings.water_tank_water_min_level;
     int boiling_tank_water_max_level = system_settings.boiling_tank_water_max_level;
     int boiling_tank_water_min_level = system_settings.boiling_tank_water_min_level;
-}
-
-void get_system_status(system_settings_t* system_status) {
-    system_status->input_valve_flow_speed = input_valve_flow_speed;
-    system_status->middle_valve_flow_speed = middle_valve_flow_speed;
-    system_status->output_valve_flow_speed = output_valve_flow_speed;
-    system_status->water_boiling_rate = water_boiling_rate;
-    system_status->sensor_reading_timer = sensor_reading_timer;
-    system_status->water_tank_water_max_level = water_tank_water_max_level;
-    system_status->water_tank_water_min_level = water_tank_water_min_level;
-    system_status->boiling_tank_water_max_level = boiling_tank_water_max_level;
-    system_status->boiling_tank_water_min_level = boiling_tank_water_min_level;
 }
