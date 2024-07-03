@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include "nvs_flash.h"
+#include "wifi.h"
+#include "tcp_client.h"
+#include "system_simulation.h"
 
 void app_main() {
   //Initialize NVS
@@ -9,4 +12,10 @@ void app_main() {
     ret = nvs_flash_init();
   }
   ESP_ERROR_CHECK(ret);
+
+  wifi_init_sta();
+
+  setup_tcp_socket();
+
+  startup_system();
 }

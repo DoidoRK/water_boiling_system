@@ -65,18 +65,12 @@ void send_packet(data_packet_t data_packet) {
     free(payload);
 }
 
-// static void SendSystemStatusTask(void* arg){
-//     while (1) {
-//         sensor_readings_t sensor_readings;
-//         // Gets sensor readings coming from sensor_readings_queue
-//         if(xQueueReceive(sensor_readings_queue, &sensor_readings, portMAX_DELAY)) {
-//             data_packet_t data_packet;
-//             data_packet.message_type = SYSTEM_STATUS;
-//             data_packet.sensor_readings = sensor_readings;
-//             send_packet(data_packet);
-//         }
-//     }
-// }
+void sendSystemStatysDataPacket(sensor_readings_t sensor_readings){
+    data_packet_t data_packet;
+    data_packet.message_type = SYSTEM_STATUS;
+    data_packet.sensor_readings = sensor_readings;
+    send_packet(data_packet);
+}
 
 // static void handleServerMessageTask(void* arg){
 //     while (1) {
@@ -105,5 +99,4 @@ void setup_tcp_socket(void){
         return; // Add return statement to prevent further execution
     }
     ESP_LOGI(TAG, "Successfully connected to server");
-    // xTaskCreate(SendSystemStatusTask, "SendSystemStatusTask", 2048, NULL, 1, NULL);
 }

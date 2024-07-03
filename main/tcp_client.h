@@ -23,4 +23,7 @@ void send_packet(data_packet_t data_packet);
 // Function to set up the TCP socket
 void setup_tcp_socket(void);
 
+// Function to send the sensor readings a data packet
+void sendSystemStatysDataPacket(sensor_readings_t sensor_readings);
+
 #endif // TCP_CLIENT_H

@@ -105,6 +105,7 @@ void SystemControlTask(){
         output_valve_status = 0;
         water_is_boiled = 0;
         
+        
         ReadDataFromSensors();
 
         if(1 != max_sensor_tank1){
@@ -145,8 +146,7 @@ void SystemControlTask(){
         sensor_readings.resistance_status = resistance_status;
         sensor_readings.water_is_boiled = water_is_boiled;
 
-        // xQueueSend(sensor_readings_queue, &sensor_readings, pdMS_TO_TICKS(current_system_params.sensor_reading_timer));
-
+        sendSystemStatysDataPacket(sensor_readings);
         vTaskDelay(pdMS_TO_TICKS(current_system_params.sensor_reading_timer));
     }
 }
@@ -155,19 +155,19 @@ void startup_system(){
 
     water_tank1_mutex = xSemaphoreCreateMutex();
     if (water_tank1_mutex != NULL) {
-        printf("Input valve mutex created\n");
+        ESP_LOGI("SYSTEM_SIMULATION", "Input valve mutex created.");
     }
     xSemaphoreGive(water_tank1_mutex);
 
     water_tank2_mutex = xSemaphoreCreateMutex();
     if (water_tank2_mutex != NULL) {
-        printf("Middle valve mutex created\n");
+        ESP_LOGI("SYSTEM_SIMULATION", "Middle valve mutex created.");
     }
     xSemaphoreGive(water_tank2_mutex);
 
     temp_water2_mutex = xSemaphoreCreateMutex();
     if (temp_water2_mutex != NULL) {
-        printf("Resistance mutex created\n");
+        ESP_LOGI("SYSTEM_SIMULATION", "Resistance mutex created.");
     }
     xSemaphoreGive(temp_water2_mutex);
 

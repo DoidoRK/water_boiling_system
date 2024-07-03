@@ -6,6 +6,7 @@
 #include "freertos/semphr.h"
 #include "freertos/queue.h"
 #include "types.h"
+#include "tcp_client.h"
 
 // Function declarations
 void startup_system(void);
