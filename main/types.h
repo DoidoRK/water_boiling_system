@@ -1,3 +1,8 @@
+#ifndef TYPES_H
+#define TYPES_H
+
+#include <stdio.h>
+
 enum MESSAGE_OP{
     CONNECTION_ATTEMPT,
     SERVER_CONNECTION_STABLISHED,
@@ -40,3 +45,5 @@ typedef struct data_packet_struct{
     system_params_t system_settings;
     sensor_readings_t sensor_readings;
 } data_packet_t;
+
+#endif // TYPES_H

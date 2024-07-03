@@ -9,11 +9,6 @@ char host_ip[] = HOST_IP_ADDR;
 int addr_family = 0;
 int ip_protocol = 0;
 
-// External queue handles
-extern QueueHandle_t recv_packet_queue;
-extern QueueHandle_t sensor_readings_queue;
-extern void set_system_parameters(system_params_t system_settings);
-
 char* data_packet_to_json(data_packet_t packet) {
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "message_type", packet.message_type);
@@ -70,24 +65,24 @@ void send_packet(data_packet_t data_packet) {
     free(payload);
 }
 
-static void SendSystemStatusTask(void* arg){
-    while (1) {
-        sensor_readings_t sensor_readings;
-        // Gets sensor readings coming from sensor_readings_queue
-        if(xQueueReceive(sensor_readings_queue, &sensor_readings, portMAX_DELAY)) {
-            data_packet_t data_packet;
-            data_packet.message_type = SYSTEM_STATUS;
-            data_packet.sensor_readings = sensor_readings;
-            send_packet(data_packet);
-        }
-    }
-}
+// static void SendSystemStatusTask(void* arg){
+//     while (1) {
+//         sensor_readings_t sensor_readings;
+//         // Gets sensor readings coming from sensor_readings_queue
+//         if(xQueueReceive(sensor_readings_queue, &sensor_readings, portMAX_DELAY)) {
+//             data_packet_t data_packet;
+//             data_packet.message_type = SYSTEM_STATUS;
+//             data_packet.sensor_readings = sensor_readings;
+//             send_packet(data_packet);
+//         }
+//     }
+// }
 
-static void handleServerMessageTask(void* arg){
-    while (1) {
-        //WIP
-    }
-}
+// static void handleServerMessageTask(void* arg){
+//     while (1) {
+//         //WIP
+//     }
+// }
 
 void setup_tcp_socket(void){
     inet_pton(AF_INET, host_ip, &dest_addr.sin_addr);
@@ -110,5 +105,5 @@ void setup_tcp_socket(void){
         return; // Add return statement to prevent further execution
     }
     ESP_LOGI(TAG, "Successfully connected to server");
-    xTaskCreate(SendSystemStatusTask, "SendSystemStatusTask", 2048, NULL, 1, NULL);
+    // xTaskCreate(SendSystemStatusTask, "SendSystemStatusTask", 2048, NULL, 1, NULL);
 }

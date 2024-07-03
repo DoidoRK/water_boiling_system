@@ -7,9 +7,6 @@
 #include "freertos/queue.h"
 #include "types.h"
 
-// Sensor readings queue
-extern QueueHandle_t sensor_readings_queue;
-
 // Function declarations
 void startup_system(void);
 void set_system_parameters(system_params_t system_settings);

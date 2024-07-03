@@ -1,14 +1,5 @@
 #include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "nvs_flash.h"
-#include "lwip/err.h"
-#include "lwip/sys.h"
-
-
-extern void wifi_init_sta(void);
-extern void setup_tcp_socket(void);
-// extern void send_packet(void);
 
 void app_main() {
   //Initialize NVS
@@ -18,8 +9,4 @@ void app_main() {
     ret = nvs_flash_init();
   }
   ESP_ERROR_CHECK(ret);
-
-  wifi_init_sta();
-  setup_tcp_socket();
-  // send_packet();
 }

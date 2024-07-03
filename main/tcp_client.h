@@ -1,7 +1,6 @@
 #ifndef TCP_CLIENT_H
 #define TCP_CLIENT_H
 
-#include "freertos/queue.h"
 #include "types.h"
 #include "cJSON.h"
 #include "esp_log.h"
@@ -11,10 +10,6 @@
 
 #define HOST_IP_ADDR CONFIG_IPV4_ADDR
 #define PORT CONFIG_PORT
-
-// External queue handles
-extern QueueHandle_t recv_packet_queue;
-extern QueueHandle_t sensor_readings_queue;
 
 // External function to set system parameters
 extern void set_system_parameters(system_params_t system_settings);
