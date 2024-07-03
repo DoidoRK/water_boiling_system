@@ -146,12 +146,22 @@ void SystemControlTask(){
         sensor_readings.resistance_status = resistance_status;
         sensor_readings.water_is_boiled = water_is_boiled;
 
-        sendSystemStatysDataPacket(sensor_readings);
+        sendSystemStatysDataPacket(sensor_readings, current_system_params);
         vTaskDelay(pdMS_TO_TICKS(current_system_params.sensor_reading_timer));
     }
 }
 
 void startup_system(){
+
+    current_system_params.input_valve_flow_speed = 150;
+    current_system_params.middle_valve_flow_speed = 150;
+    current_system_params.output_valve_flow_speed = 150;
+    current_system_params.water_boiling_rate = 150;
+    current_system_params.sensor_reading_timer = 100;
+    current_system_params.water_tank_water_max_level = 95;
+    current_system_params.water_tank_water_min_level = 20;
+    current_system_params.boiling_tank_water_max_level = 95;
+    current_system_params.boiling_tank_water_min_level = 20;
 
     water_tank1_mutex = xSemaphoreCreateMutex();
     if (water_tank1_mutex != NULL) {
@@ -171,7 +181,7 @@ void startup_system(){
     }
     xSemaphoreGive(temp_water2_mutex);
 
-    xTaskCreate(SystemControlTask,"SystemControlTask", 2048, NULL, 1, NULL);
+    xTaskCreate(SystemControlTask,"SystemControlTask", 4096, NULL, 1, NULL);
     xTaskCreate(InputValveControlTask,"InputValveControlTask",2048,NULL,3,NULL);
     xTaskCreate(MiddleValveControlTask,"MiddleValveControlTask",2048,NULL,3,NULL);
     xTaskCreate(ResistanceControlTask,"ResistanceControlTask",2048,NULL,3,NULL);

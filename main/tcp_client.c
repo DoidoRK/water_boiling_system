@@ -65,9 +65,10 @@ void send_packet(data_packet_t data_packet) {
     free(payload);
 }
 
-void sendSystemStatysDataPacket(sensor_readings_t sensor_readings){
+void sendSystemStatysDataPacket(sensor_readings_t sensor_readings, system_params_t system_params){
     data_packet_t data_packet;
     data_packet.message_type = SYSTEM_STATUS;
+    data_packet.system_settings = system_params;
     data_packet.sensor_readings = sensor_readings;
     send_packet(data_packet);
 }
