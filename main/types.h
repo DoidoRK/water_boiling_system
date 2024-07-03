@@ -13,6 +13,12 @@ enum MESSAGE_OP{
     SYSTEM_SHUTDOWN
 };
 
+enum DEVICE_TYPE{
+    ESP,
+    FRONT_END,
+    SERVER
+};
+
 typedef struct system_params_struct{
     int input_valve_flow_speed;
     int middle_valve_flow_speed;
@@ -41,6 +47,7 @@ typedef struct sensor_readings_struct{
 } sensor_readings_t;
 
 typedef struct data_packet_struct{
+    int device_type;
     int message_type;
     system_params_t system_settings;
     sensor_readings_t sensor_readings;

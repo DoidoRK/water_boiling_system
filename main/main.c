@@ -16,6 +16,4 @@ void app_main() {
   wifi_init_sta();
 
   setup_tcp_socket();
-
-  startup_system();
 }

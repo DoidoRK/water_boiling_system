@@ -7,9 +7,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "system_simulation.h"
 
 #define HOST_IP_ADDR CONFIG_IPV4_ADDR
 #define PORT CONFIG_PORT
+#define MAX_JSON_LENGTH 512
 
 // External function to set system parameters
 extern void set_system_parameters(system_params_t system_settings);
@@ -24,6 +28,6 @@ void send_packet(data_packet_t data_packet);
 void setup_tcp_socket(void);
 
 // Function to send the sensor readings a data packet
-void sendSystemStatysDataPacket(sensor_readings_t sensor_readings, system_params_t system_params);
+void sendSystemStatusDataPacket(sensor_readings_t sensor_readings, system_params_t system_params);
 
 #endif // TCP_CLIENT_H

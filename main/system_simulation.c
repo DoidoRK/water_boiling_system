@@ -9,6 +9,8 @@
 
 system_params_t current_system_params;
 
+static const char *TAG = "SYSTEM_SIMULATION";
+
 int max_sensor_tank1 = 0, min_sensor_tank1 = 0;
 int water_level_tank1 = 0;
 int temp_water_tank2 = 27;
@@ -146,7 +148,7 @@ void SystemControlTask(){
         sensor_readings.resistance_status = resistance_status;
         sensor_readings.water_is_boiled = water_is_boiled;
 
-        sendSystemStatysDataPacket(sensor_readings, current_system_params);
+        sendSystemStatusDataPacket(sensor_readings, current_system_params);
         vTaskDelay(pdMS_TO_TICKS(current_system_params.sensor_reading_timer));
     }
 }
@@ -165,19 +167,19 @@ void startup_system(){
 
     water_tank1_mutex = xSemaphoreCreateMutex();
     if (water_tank1_mutex != NULL) {
-        ESP_LOGI("SYSTEM_SIMULATION", "Input valve mutex created.");
+        ESP_LOGI(TAG, "Input valve mutex created.");
     }
     xSemaphoreGive(water_tank1_mutex);
 
     water_tank2_mutex = xSemaphoreCreateMutex();
     if (water_tank2_mutex != NULL) {
-        ESP_LOGI("SYSTEM_SIMULATION", "Middle valve mutex created.");
+        ESP_LOGI(TAG, "Middle valve mutex created.");
     }
     xSemaphoreGive(water_tank2_mutex);
 
     temp_water2_mutex = xSemaphoreCreateMutex();
     if (temp_water2_mutex != NULL) {
-        ESP_LOGI("SYSTEM_SIMULATION", "Resistance mutex created.");
+        ESP_LOGI(TAG, "Resistance mutex created.");
     }
     xSemaphoreGive(temp_water2_mutex);
 
@@ -190,5 +192,17 @@ void startup_system(){
 
 void set_system_parameters(system_params_t system_settings) {
     current_system_params = system_settings;
-    ESP_LOGI("SYSTEM_SIMULATION", "System parameters updated.");
+    ESP_LOGI(TAG, "System parameters updated.");
+}
+
+void shutdown_system(){
+    xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
+    xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
+    xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
+    xSemaphoreTake(temp_water2_mutex, portMAX_DELAY);
+    xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
+    input_valve_status = 0;
+    middle_valve_status = 0;
+    output_valve_status = 0;
+    water_is_boiled = 0;
 }

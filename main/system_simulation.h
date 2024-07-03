@@ -4,12 +4,12 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
-#include "freertos/queue.h"
 #include "types.h"
 #include "tcp_client.h"
 
 // Function declarations
 void startup_system(void);
+void shutdown_system(void);
 void set_system_parameters(system_params_t system_settings);
 
 #endif // SYSTEM_SIMULATION_H
