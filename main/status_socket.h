@@ -11,16 +11,6 @@
 #include "utils.h"
 #include "system_simulation.h"
 
-#define HOST_IP_ADDR CONFIG_IPV4_ADDR
-#define STATUS_PORT CONFIG_STATUS_PORT
-#define MAX_JSON_LENGTH 611
-
-// External function to set system parameters
-extern void set_system_parameters(system_params_t system_settings);
-
-// Function to send a data packet
-void send_packet(data_packet_t data_packet);
-
 // Function to set up the TCP socket
 void setup_status_socket(void);
 

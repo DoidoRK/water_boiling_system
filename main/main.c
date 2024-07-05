@@ -2,6 +2,7 @@
 #include "nvs_flash.h"
 #include "wifi.h"
 #include "status_socket.h"
+#include "cmd_socket.h"
 #include "system_simulation.h"
 
 void app_main() {
@@ -16,4 +17,5 @@ void app_main() {
   wifi_init_sta();
 
   setup_status_socket();
+  setup_cmd_socket();
 }
