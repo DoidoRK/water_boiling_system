@@ -21,7 +21,7 @@ int water_is_boiled = 0;
 
 SemaphoreHandle_t water_tank1_mutex, water_tank2_mutex, temp_water2_mutex;
 
-void ReadDataFromSensors(){
+void readDataFromSensors(){
     if (current_system_params.water_tank_water_max_level <= water_level_tank1) {
         max_sensor_tank1 = 1;
     } else {
@@ -108,7 +108,7 @@ void SystemControlTask(){
         water_is_boiled = 0;
         
         
-        ReadDataFromSensors();
+        readDataFromSensors();
 
         if(1 != max_sensor_tank1){
             input_valve_status = 1;
@@ -155,11 +155,11 @@ void SystemControlTask(){
 
 void startup_system(){
 
-    current_system_params.input_valve_flow_speed = 150;
-    current_system_params.middle_valve_flow_speed = 150;
-    current_system_params.output_valve_flow_speed = 150;
-    current_system_params.water_boiling_rate = 150;
-    current_system_params.sensor_reading_timer = 100;
+    current_system_params.input_valve_flow_speed = 200;
+    current_system_params.middle_valve_flow_speed = 200;
+    current_system_params.output_valve_flow_speed = 200;
+    current_system_params.water_boiling_rate = 200;
+    current_system_params.sensor_reading_timer = 200;
     current_system_params.water_tank_water_max_level = 95;
     current_system_params.water_tank_water_min_level = 20;
     current_system_params.boiling_tank_water_max_level = 95;

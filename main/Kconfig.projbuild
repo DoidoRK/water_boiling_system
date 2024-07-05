@@ -74,10 +74,17 @@ menu "TCP/IP protocol configuration"
         help
             The system will connect to this IPV4 address.
 
-    config PORT
-        int "Port"
+    config STATUS_PORT
+        int "Status Port"
         range 0 65535
         default 3333
         help
-            The remote port to which the client will connect to.
+            The remote port to which the client will connect to send system status data.
+
+    config CMD_PORT
+        int "Comand Port"
+        range 0 65535
+        default 3333
+        help
+            The remote port to which the client will connect to receive user given commands.
 endmenu

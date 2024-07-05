@@ -5,7 +5,7 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "types.h"
-#include "tcp_client.h"
+#include "status_socket.h"
 
 // Function declarations
 void startup_system(void);

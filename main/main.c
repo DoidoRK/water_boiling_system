@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "nvs_flash.h"
 #include "wifi.h"
-#include "tcp_client.h"
+#include "status_socket.h"
 #include "system_simulation.h"
 
 void app_main() {
@@ -15,5 +15,5 @@ void app_main() {
 
   wifi_init_sta();
 
-  setup_tcp_socket();
+  setup_status_socket();
 }
