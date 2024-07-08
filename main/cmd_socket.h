@@ -11,7 +11,7 @@
 #include "utils.h"
 #include "system_simulation.h"
 
-#define MAX_JSON_LENGTH 611
+#define MAX_JSON_LENGTH 1024
 
 // Function to set up the TCP socket
 void setup_cmd_socket(void);

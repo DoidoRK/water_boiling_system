@@ -5,9 +5,9 @@ static const char *TAG = "TCP SATUS SOCKET";
 struct sockaddr_in dest_addr;
 int status_socket;
 
-void send_packet(data_packet_t data_packet) {
+void send_sensor_readings(sensor_readings_t sensor_readings) {
     // Convert struct to JSON
-    char *payload = data_packet_to_json(data_packet);
+    char *payload = sensor_readings_to_json(sensor_readings);
     char rx_buffer[128];
 
     // Send JSON payload
@@ -24,15 +24,6 @@ void send_packet(data_packet_t data_packet) {
 
     // Free the JSON string
     free(payload);
-}
-
-void sendSystemStatusDataPacket(sensor_readings_t sensor_readings, system_params_t system_params){
-    data_packet_t data_packet;
-    data_packet.device_type = ESP;
-    data_packet.message_type = SYSTEM_STATUS;
-    data_packet.system_settings = system_params;
-    data_packet.sensor_readings = sensor_readings;
-    send_packet(data_packet);
 }
 
 void setup_status_socket(void){

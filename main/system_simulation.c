@@ -7,7 +7,18 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 
-system_params_t current_system_params;
+system_params_t current_system_params = {
+    .input_valve_flow_speed = 150,
+    .middle_valve_flow_speed = 150,
+    .output_valve_flow_speed = 150,
+    .target_temperature = 70,
+    .water_boiling_rate = 150,
+    .sensor_reading_timer = 100,
+    .water_tank_water_max_level = 95,
+    .water_tank_water_min_level = 20,
+    .boiling_tank_water_max_level = 95,
+    .boiling_tank_water_min_level = 20,
+};
 
 static const char *TAG = "SYSTEM_SIMULATION";
 
@@ -114,12 +125,12 @@ void SystemControlTask(){
             input_valve_status = 1;
         }
 
-        if(70 <= temp_water_tank2){
+        if(current_system_params.target_temperature <= temp_water_tank2){
             resistance_status = 0;
             water_is_boiled = 1;
         }
 
-        if(1 == max_sensor_tank2 && 70 > temp_water_tank2){
+        if(1 == max_sensor_tank2 && current_system_params.target_temperature > temp_water_tank2){
             resistance_status = 1;
         }
 
@@ -131,7 +142,7 @@ void SystemControlTask(){
             middle_valve_status = 1;
         }
 
-        if(70 <= temp_water_tank2 && min_sensor_tank2 != 0){
+        if(current_system_params.target_temperature <= temp_water_tank2 && min_sensor_tank2 != 0){
             output_valve_status = 1;
         }
 
@@ -148,23 +159,12 @@ void SystemControlTask(){
         sensor_readings.resistance_status = resistance_status;
         sensor_readings.water_is_boiled = water_is_boiled;
 
-        sendSystemStatusDataPacket(sensor_readings, current_system_params);
+        send_sensor_readings(sensor_readings);
         vTaskDelay(pdMS_TO_TICKS(current_system_params.sensor_reading_timer));
     }
 }
 
 void startup_system(){
-
-    current_system_params.input_valve_flow_speed = 200;
-    current_system_params.middle_valve_flow_speed = 200;
-    current_system_params.output_valve_flow_speed = 200;
-    current_system_params.water_boiling_rate = 200;
-    current_system_params.sensor_reading_timer = 200;
-    current_system_params.water_tank_water_max_level = 95;
-    current_system_params.water_tank_water_min_level = 20;
-    current_system_params.boiling_tank_water_max_level = 95;
-    current_system_params.boiling_tank_water_min_level = 20;
-
     water_tank1_mutex = xSemaphoreCreateMutex();
     if (water_tank1_mutex != NULL) {
         ESP_LOGI(TAG, "Input valve mutex created.");
@@ -196,13 +196,13 @@ void set_system_parameters(system_params_t system_settings) {
 }
 
 void shutdown_system(){
+    ESP_LOGI(TAG, "System shutdown.");
     xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
     xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
     xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
     xSemaphoreTake(temp_water2_mutex, portMAX_DELAY);
     xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
-    input_valve_status = 0;
-    middle_valve_status = 0;
-    output_valve_status = 0;
-    water_is_boiled = 0;
+    input_valve_status = 1;
+    middle_valve_status = 1;
+    output_valve_status = 1;
 }

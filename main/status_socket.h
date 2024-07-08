@@ -14,7 +14,7 @@
 // Function to set up the TCP socket
 void setup_status_socket(void);
 
-// Function to send the sensor readings a data packet
-void sendSystemStatusDataPacket(sensor_readings_t sensor_readings, system_params_t system_params);
+// Function to send the sensor readings through status socket
+void send_sensor_readings(sensor_readings_t sensor_readings);
 
 #endif // STATUS_SOCKET_H

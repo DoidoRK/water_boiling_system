@@ -1,5 +1,5 @@
 build
-sdkconfig
+sdkconfig*
 managed_components
 .devcontainer
 .vscode

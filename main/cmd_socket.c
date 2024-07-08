@@ -17,7 +17,7 @@ static void handleServerMessageTask(void* arg){
             break;
         }
         else { // Data received
-            data_packet_t recv_pckt = json_to_data_packet(json_str);
+            command_data_packet_t recv_pckt = json_to_command_data_packet(json_str);
             switch (recv_pckt.message_type)
             {
                 case SYSTEM_STARTUP:
@@ -30,10 +30,6 @@ static void handleServerMessageTask(void* arg){
 
                 case SYSTEM_SHUTDOWN:
                     shutdown_system();
-                    break;
-
-                case SYSTEM_INTR:
-                    //Implement INTR proccess
                     break;
 
                 default:
@@ -61,8 +57,8 @@ void setup_cmd_socket(void){
         ESP_LOGE(TAG, "unable to connect: errno %d", errno);
         close(cmd_socket); // Add cleanup on failure
         return; // Add return statement to prevent further execution
+    } else {
+        ESP_LOGI(TAG, "Successfully connected to server");
+        xTaskCreate(handleServerMessageTask,"handleServerMessageTask",4096,NULL,4,NULL);
     }
-    ESP_LOGI(TAG, "Successfully connected to server");
-
-    xTaskCreate(handleServerMessageTask,"handleServerMessageTask",4096,NULL,4,NULL);
 }

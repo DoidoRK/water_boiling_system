@@ -4,25 +4,15 @@
 #include <stdio.h>
 
 enum MESSAGE_OP{
-    CONNECTION_ATTEMPT,
-    SERVER_CONNECTION_STABLISHED,
-    SYSTEM_PARAM_CHANGE,
     SYSTEM_STARTUP,
-    SYSTEM_STATUS,
-    SYSTEM_INTR,
+    SYSTEM_PARAM_CHANGE,
     SYSTEM_SHUTDOWN
 };
-
-enum DEVICE_TYPE{
-    ESP,
-    FRONT_END,
-    SERVER
-};
-
 typedef struct system_params_struct{
     int input_valve_flow_speed;
     int middle_valve_flow_speed;
     int output_valve_flow_speed;
+    int target_temperature;
     int water_boiling_rate;
     int sensor_reading_timer;
     int water_tank_water_max_level;
@@ -46,11 +36,9 @@ typedef struct sensor_readings_struct{
     int water_is_boiled;
 } sensor_readings_t;
 
-typedef struct data_packet_struct{
-    int device_type;
+typedef struct command_data_packet_struct{
     int message_type;
     system_params_t system_settings;
-    sensor_readings_t sensor_readings;
-} data_packet_t;
+} command_data_packet_t;
 
 #endif // TYPES_H
