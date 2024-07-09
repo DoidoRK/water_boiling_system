@@ -6,7 +6,7 @@
 enum MESSAGE_OP{
     SYSTEM_STARTUP,
     SYSTEM_PARAM_CHANGE,
-    SYSTEM_SHUTDOWN
+    SYSTEM_SHUTDOWN,
 };
 typedef struct system_params_struct{
     int input_valve_flow_speed;
