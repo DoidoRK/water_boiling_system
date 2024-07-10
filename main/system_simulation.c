@@ -29,6 +29,7 @@ int max_sensor_tank2 = 0, min_sensor_tank2 = 0;
 int water_level_tank2 = 0;
 int input_valve_status = 0, middle_valve_status = 0, output_valve_status = 0, resistance_status = 0;
 int water_is_boiled = 0;
+int draining_system = 0;
 
 sensor_readings_t sensor_readings;
 
@@ -43,6 +44,7 @@ TaskHandle_t xOutputValveControlTaskHandle = NULL;
 
 void updateSensorReadings(){
     xSemaphoreTake(sensor_readings_mutex, portMAX_DELAY);
+    sensor_readings.draining_system = draining_system;
     sensor_readings.max_sensor_tank1 = max_sensor_tank1;
     sensor_readings.min_sensor_tank1 = min_sensor_tank1;
     sensor_readings.water_level_tank1 = water_level_tank1;
@@ -85,9 +87,11 @@ void readDataFromSensors(){
 void InputValveControlTask(){
     for(;;){
         if(input_valve_status){
-            xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
-            water_level_tank1 += 2;
-            xSemaphoreGive(water_tank1_mutex);
+            if(water_level_tank1 <= current_system_params.water_tank_water_max_level){
+                xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
+                water_level_tank1 += 2;
+                xSemaphoreGive(water_tank1_mutex);
+            }
         }
         vTaskDelay(pdMS_TO_TICKS(current_system_params.input_valve_flow_speed));
     }
@@ -96,13 +100,19 @@ void InputValveControlTask(){
 void MiddleValveControlTask(){
     for(;;){
         if(middle_valve_status){
-            xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
-            water_level_tank1--;
-            xSemaphoreGive(water_tank1_mutex);
+            if (water_level_tank1 > 0)
+            {
+                xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
+                water_level_tank1--;
+                xSemaphoreGive(water_tank1_mutex);
+            }
 
-            xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
-            water_level_tank2++;
-            xSemaphoreGive(water_tank2_mutex);
+            if (water_level_tank2 <= current_system_params.boiling_tank_water_max_level)
+            {
+                xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
+                water_level_tank2++;
+                xSemaphoreGive(water_tank2_mutex);
+            }
 
             if(27 < temp_water_tank2){
                 xSemaphoreTake(temp_water2_mutex, portMAX_DELAY);
@@ -128,9 +138,11 @@ void ResistanceControlTask(){
 void OutputValveControlTask(){
     for(;;) {
         if(output_valve_status){
-            xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
-            water_level_tank2--;
-            xSemaphoreGive(water_tank2_mutex);
+            if(water_level_tank2 > 0){
+                xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
+                water_level_tank2--;
+                xSemaphoreGive(water_tank2_mutex);
+            }
         }
         vTaskDelay(pdMS_TO_TICKS(current_system_params.output_valve_flow_speed));
     }
@@ -188,7 +200,7 @@ void StatusCommTask(){
 
 void DrainOutSystemTask(){
     ESP_LOGI(TAG, "Drain Out task started.");
-    int draining_system = 1;
+    draining_system = 1;
     while (draining_system)
     {
         input_valve_status = 0;
@@ -227,6 +239,7 @@ void DrainOutSystemTask(){
     input_valve_status = 0;
     middle_valve_status = 0;
     output_valve_status = 0;
+    draining_system = 0;
     updateSensorReadings();
     vTaskDelay(pdMS_TO_TICKS(current_system_params.sensor_reading_timer));
     if( xInputValveControlTaskHandle != NULL )

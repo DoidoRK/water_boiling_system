@@ -2,6 +2,7 @@
 
 char* sensor_readings_to_json(sensor_readings_t sensor_readings) {
     cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "draining_system", sensor_readings.draining_system);
     cJSON_AddNumberToObject(root, "max_sensor_tank1", sensor_readings.max_sensor_tank1);
     cJSON_AddNumberToObject(root, "min_sensor_tank1", sensor_readings.min_sensor_tank1);
     cJSON_AddNumberToObject(root, "water_level_tank1", sensor_readings.water_level_tank1);

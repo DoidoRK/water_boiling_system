@@ -22,6 +22,7 @@ typedef struct system_params_struct{
 } system_params_t;
 
 typedef struct sensor_readings_struct{
+    int draining_system;
     int max_sensor_tank1;
     int min_sensor_tank1;
     int water_level_tank1;
