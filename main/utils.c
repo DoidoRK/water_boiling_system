@@ -43,6 +43,8 @@ command_data_packet_t json_to_command_data_packet(const char *json_str) {
     // Extract system_settings
     cJSON *system_settings = cJSON_GetObjectItem(root, "system_settings");
     if (cJSON_IsObject(system_settings)) {
+        packet.system_settings.input_valve_flow_speed = cJSON_GetObjectItem(system_settings, "water_supply_volume")->valueint;
+        packet.system_settings.middle_valve_flow_speed = cJSON_GetObjectItem(system_settings, "boiling_tank_volume")->valueint;
         packet.system_settings.input_valve_flow_speed = cJSON_GetObjectItem(system_settings, "input_valve_flow_speed")->valueint;
         packet.system_settings.middle_valve_flow_speed = cJSON_GetObjectItem(system_settings, "middle_valve_flow_speed")->valueint;
         packet.system_settings.output_valve_flow_speed = cJSON_GetObjectItem(system_settings, "output_valve_flow_speed")->valueint;

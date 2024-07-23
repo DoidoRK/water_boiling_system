@@ -8,6 +8,8 @@
 #include "freertos/semphr.h"
 
 system_params_t current_system_params = {
+    .water_supply_volume = 100,
+    .boiling_tank_volume = 100,
     .input_valve_flow_speed = 150,
     .middle_valve_flow_speed = 150,
     .output_valve_flow_speed = 150,
@@ -87,7 +89,7 @@ void readDataFromSensors(){
 void InputValveControlTask(){
     for(;;){
         if(input_valve_status){
-            if(water_level_tank1 <= current_system_params.water_tank_water_max_level){
+            if(water_level_tank1 < current_system_params.water_supply_volume){
                 xSemaphoreTake(water_tank1_mutex, portMAX_DELAY);
                 water_level_tank1 += 2;
                 xSemaphoreGive(water_tank1_mutex);
@@ -107,7 +109,7 @@ void MiddleValveControlTask(){
                 xSemaphoreGive(water_tank1_mutex);
             }
 
-            if (water_level_tank2 <= current_system_params.boiling_tank_water_max_level)
+            if (water_level_tank2 < current_system_params.boiling_tank_volume)
             {
                 xSemaphoreTake(water_tank2_mutex, portMAX_DELAY);
                 water_level_tank2++;

@@ -9,6 +9,8 @@ enum MESSAGE_OP{
     SYSTEM_SHUTDOWN,
 };
 typedef struct system_params_struct{
+    int water_supply_volume;
+    int boiling_tank_volume;
     int input_valve_flow_speed;
     int middle_valve_flow_speed;
     int output_valve_flow_speed;
