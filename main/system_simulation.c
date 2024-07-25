@@ -6,6 +6,9 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
+#include <math.h>
+
+#define DELAY_CALC_RATE 150000
 
 system_params_t current_system_params = {
     .water_supply_volume = 100,
@@ -24,6 +27,10 @@ system_params_t current_system_params = {
 
 static const char *TAG = "SYSTEM_SIMULATION";
 
+int input_valve_delay = 150;
+int middle_valve_delay = 150;
+int output_valve_delay = 150;
+int water_boiling_delay = 150;
 int max_sensor_tank1 = 0, min_sensor_tank1 = 0;
 int water_level_tank1 = 0;
 int temp_water_tank2 = 27;
@@ -43,6 +50,12 @@ TaskHandle_t xInputValveControlTaskHandle = NULL;
 TaskHandle_t xMiddleValveControlTaskHandle = NULL;
 TaskHandle_t xResistanceControlTaskHandle = NULL;
 TaskHandle_t xOutputValveControlTaskHandle = NULL;
+
+int calculateDelay(int value){
+    double temp = (1.0 / value) * DELAY_CALC_RATE;
+    int time_delay = (int)ceil(temp);
+    return time_delay;
+}
 
 void updateSensorReadings(){
     xSemaphoreTake(sensor_readings_mutex, portMAX_DELAY);
@@ -95,7 +108,7 @@ void InputValveControlTask(){
                 xSemaphoreGive(water_tank1_mutex);
             }
         }
-        vTaskDelay(pdMS_TO_TICKS(current_system_params.input_valve_flow_speed));
+        vTaskDelay(pdMS_TO_TICKS(input_valve_delay));
     }
 }
 
@@ -122,7 +135,7 @@ void MiddleValveControlTask(){
                 xSemaphoreGive(temp_water2_mutex);
             }
         }
-        vTaskDelay(pdMS_TO_TICKS(current_system_params.middle_valve_flow_speed));
+        vTaskDelay(pdMS_TO_TICKS(middle_valve_delay));
     }
 }
 
@@ -133,7 +146,7 @@ void ResistanceControlTask(){
             temp_water_tank2++;
             xSemaphoreGive(temp_water2_mutex);
         }
-        vTaskDelay(pdMS_TO_TICKS(current_system_params.water_boiling_rate));
+        vTaskDelay(pdMS_TO_TICKS(water_boiling_delay));
     }
 }
 
@@ -145,8 +158,8 @@ void OutputValveControlTask(){
                 water_level_tank2--;
                 xSemaphoreGive(water_tank2_mutex);
             }
-        }
-        vTaskDelay(pdMS_TO_TICKS(current_system_params.output_valve_flow_speed));
+        } 
+        vTaskDelay(pdMS_TO_TICKS(output_valve_delay));
     }
 }
 
@@ -336,6 +349,14 @@ void startup_system(){
 
 void set_system_parameters(system_params_t system_settings) {
     current_system_params = system_settings;
+    input_valve_delay = calculateDelay(system_settings.input_valve_flow_speed);
+    middle_valve_delay = calculateDelay(system_settings.middle_valve_flow_speed);
+    output_valve_delay = calculateDelay(system_settings.output_valve_flow_speed);
+    water_boiling_delay = calculateDelay(system_settings.water_boiling_rate);
+    ESP_LOGI(TAG, "input_valve_delay: %d", input_valve_delay);
+    ESP_LOGI(TAG, "middle_valve_delay: %d", middle_valve_delay);
+    ESP_LOGI(TAG, "output_valve_delay: %d", output_valve_delay);
+    ESP_LOGI(TAG, "water_boiling_delay: %d", water_boiling_delay);
     ESP_LOGI(TAG, "System parameters updated.");
 }
 
